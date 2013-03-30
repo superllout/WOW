@@ -9683,8 +9683,8 @@ bool Unit::HandleProcTriggerSpell (Unit *pVictim, uint32 damage, AuraEffect* tri
                 lightningShield->SetCharges(lsCharges + 1);
             }
         }
-        break;
-    }
+        break;}       
+	
         // Astral Shift
     case 52179:
     {
