@@ -837,6 +837,10 @@ int32 AuraEffect::CalculateAmount (Unit *caster)
         // Dash - do not set speed if not in cat form
         if (GetSpellProto()->SpellFamilyName == SPELLFAMILY_DRUID && GetSpellProto()->SpellFamilyFlags[2] & 0x00000008)
             amount = GetBase()->GetUnitOwner()->GetShapeshiftForm() == FORM_CAT ? amount : 0;
+		if (GetId() == 17002 || GetId() == 24866)      //тут попробовал сделать проверку на ауры друида от тала Звериная быстрота
+            amount = GetBase()->GetUnitOwner()->GetShapeshiftForm() == FORM_CAT ? amount : 0;
+		if (GetId() == 23218)      //тут попробовал сделать проверку на ауры друида от тала Звериная быстрота
+            amount = GetBase()->GetUnitOwner()->GetShapeshiftForm() != FORM_NONE ? amount : 0;
         break;
     case SPELL_AURA_MOUNTED:
     {
@@ -3538,6 +3542,12 @@ void AuraEffect::HandleAuraModShapeshift (AuraApplication const *aurApp, uint8 m
         // Dash
         if (AuraEffect * aurEff = target->GetAuraEffect(SPELL_AURA_MOD_INCREASE_SPEED, SPELLFAMILY_DRUID, 0, 0, 0x8))
             aurEff->RecalculateAmount();
+		if (AuraEffect* aurEff = target->GetAuraEffect(17002, 0))
+		    aurEff->RecalculateAmount();
+		if (AuraEffect* aurEff = target->GetAuraEffect(24866, 0))
+		    aurEff->RecalculateAmount();
+		if (AuraEffect* aurEff = target->GetAuraEffect(23218, 0))
+		    aurEff->RecalculateAmount();
 
         // Disarm handling
         // If druid shifts while being disarmed we need to deal with that since forms aren't affected by disarm
@@ -4665,11 +4675,15 @@ void AuraEffect::HandleAuraControlVehicle (AuraApplication const *aurApp, uint8 
 /*********************************************************/
 void AuraEffect::HandleAuraModIncreaseSpeed (AuraApplication const *aurApp, uint8 mode, bool apply) const
 {
-    if (!(mode & AURA_EFFECT_HANDLE_CHANGE_AMOUNT_MASK))
-        return;
 
     Unit *target = aurApp->GetTarget();
+	
+    if (apply && GetSpellProto()->Id == 65081 && 64128)   //body and soul
+		target->UpdateSpeed(MOVE_RUN,true);
 
+    if (!(mode & AURA_EFFECT_HANDLE_CHANGE_AMOUNT_MASK))
+        return;	
+		
     // Spirit walk removes imparing effects
     if (apply && GetSpellProto()->Id == 58875)          // Spirit Walk
         target->CastSpell(target, 58876, true);

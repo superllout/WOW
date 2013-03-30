@@ -1200,6 +1200,19 @@ void Aura::HandleAuraSpecificMods (AuraApplication const* aurApp, Unit* caster, 
                     caster->CastCustomSpell(GetUnitOwner(), 56160, &heal, NULL, NULL, true, 0, GetEffect(0));
                 }
             }
+			//body and soul
+			if (GetId() == 17 && 73325)        
+	            {				
+	             if (caster->HasAura(64127)) // rank 1
+		        {
+		         caster->CastSpell(target,64128, true);
+		        }
+		        if (caster->HasAura(64129)) // rank 2
+		        {
+			     caster->CastSpell(target,65081, true);
+		        }
+	        }
+			
             break;
         case SPELLFAMILY_ROGUE:
             // Sprint (skip non player casted spells by category)
